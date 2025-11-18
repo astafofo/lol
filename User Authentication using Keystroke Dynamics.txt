@@ -1,0 +1,10 @@
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+# Sample keystroke timings (in ms): [key_hold1, key_hold2, inter_key_time]
+X = np.array([[120, 130, 50], [125, 135, 45], [300, 400, 200]])
+y = np.array([0,0,1])  # 0=authorized, 1=unauthorized
+
+clf = RandomForestClassifier()
+clf.fit(X, y)
+print("Keystroke prediction for [123, 140, 60]:", clf.predict([[123,140,60]])[0])
