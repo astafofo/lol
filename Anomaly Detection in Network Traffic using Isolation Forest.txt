@@ -1,0 +1,14 @@
+from sklearn.ensemble import IsolationForest
+import numpy as np
+
+# Sample network traffic: [packet_size, duration, num_connections]
+X = np.array([
+    [200, 1, 5], [220, 1, 6], [210, 2, 5],  # normal
+    [1500, 10, 50], [1700, 12, 60]         # anomalies
+])
+
+iso = IsolationForest(contamination=0.2, random_state=42)
+iso.fit(X)
+y_pred = iso.predict(X)  # -1 = anomaly, 1 = normal
+
+print("Isolation Forest Predictions:", y_pred)
