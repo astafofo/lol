@@ -1,0 +1,23 @@
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# Sample URL features: [length, num_digits, has_https(1/0), num_dots]
+X = [
+    [25, 0, 1, 2],  # legit
+    [52, 3, 0, 5],  # phishing
+    [30, 1, 1, 3],  # legit
+    [60, 5, 0, 6],  # phishing
+    [28, 0, 1, 2],  # legit
+]
+y = [0, 1, 0, 1, 0]  # 0=legit, 1=phishing
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Decision Tree Classifier
+dt = DecisionTreeClassifier()
+dt.fit(X_train, y_train)
+y_pred = dt.predict(X_test)
+
+print("Decision Tree Classification Report:\n", classification_report(y_test, y_pred))
