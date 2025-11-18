@@ -1,0 +1,43 @@
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import classification_report
+
+# Sample email messages
+emails = [
+    "Hey, are we still meeting for lunch?",                  # ham
+    "Congratulations! You've won a free iPhone!",           # spam
+    "Please review the attached report.",                   # ham
+    "Claim your free prize now!",                            # spam
+    "Can we reschedule our meeting?",                       # ham
+    "Limited time offer! Click here to win!",               # spam
+    "Let's catch up tomorrow.",                              # ham
+    "You have been selected for a gift card!",              # spam
+    "Reminder: team meeting at 3 PM.",                      # ham
+    "Get rich quick by clicking this link!"                 # spam
+]
+
+# Labels: 0 = ham, 1 = spam
+labels = [0,1,0,1,0,1,0,1,0,1]
+
+# Handle imbalance using class priors (even if small dataset, demo purposes)
+class_prior = [labels.count(0)/len(labels), labels.count(1)/len(labels)]
+
+# Split data (stratified to maintain ratio)
+X_train, X_test, y_train, y_test = train_test_split(
+    emails, labels, test_size=0.3, random_state=42, stratify=labels
+)
+
+# Convert text to numeric features
+vectorizer = CountVectorizer()
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+
+# Train Naive Bayes classifier with class priors
+nb = MultinomialNB(class_prior=class_prior)
+nb.fit(X_train_vec, y_train)
+
+# Predict and evaluate
+y_pred = nb.predict(X_test_vec)
+print("Classification Report:\n")
+print(classification_report(y_test, y_pred))
