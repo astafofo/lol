@@ -1,0 +1,14 @@
+from sklearn.cluster import KMeans
+import numpy as np
+
+# Sample network flow features: [packet_rate, duration, src_bytes]
+X = np.array([
+    [10, 5, 500], [12, 6, 520], [11, 5, 510],  # normal
+    [200, 50, 5000], [220, 55, 5200]           # botnet
+])
+
+# Choose k=2 clusters
+kmeans = KMeans(n_clusters=2, random_state=42)
+y_pred = kmeans.fit_predict(X)
+
+print("K-Means Cluster Assignments:", y_pred)
