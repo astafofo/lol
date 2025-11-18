@@ -1,0 +1,29 @@
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense
+
+# Sample file behavior features: [file_read, file_write, api_calls]
+X = np.array([
+    [10, 5, 20], [12, 6, 25], [11, 5, 22],  # normal
+    [100, 200, 500], [120, 210, 550]        # ransomware
+])
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Autoencoder
+input_dim = X_scaled.shape[1]
+input_layer = Input(shape=(input_dim,))
+encoded = Dense(2, activation='relu')(input_layer)
+decoded = Dense(input_dim, activation='linear')(encoded)
+autoencoder = Model(input_layer, decoded)
+autoencoder.compile(optimizer='adam', loss='mse')
+autoencoder.fit(X_scaled, X_scaled, epochs=50, batch_size=2, verbose=0)
+
+# Reconstruction error
+recon = autoencoder.predict(X_scaled)
+mse = np.mean(np.power(X_scaled - recon, 2), axis=1)
+threshold = 0.5
+y_pred = (mse > threshold).astype(int)
+print("Ransomware Detection Labels:", y_pred)
