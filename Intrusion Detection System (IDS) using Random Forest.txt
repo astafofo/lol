@@ -1,0 +1,16 @@
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# Sample NSL-KDD-like features: [duration, src_bytes, dst_bytes, count]
+X = [
+    [0, 100, 200, 2], [10, 5000, 3000, 50], [1, 120, 180, 1], [12, 6000, 4000, 60]
+]
+y = [0, 1, 0, 1]  # 0=normal, 1=intrusion
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+rf = RandomForestClassifier(n_estimators=50, random_state=42)
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+
+print("IDS Classification Report:\n", classification_report(y_test, y_pred))
