@@ -1,0 +1,28 @@
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Flatten, Dense
+
+# Load MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_test = x_test[:1].astype('float32') / 255.0
+y_test = y_test[:1]
+
+# Simple CNN-like model
+model = Sequential([Flatten(input_shape=(28,28)), Dense(128, activation='relu'), Dense(10, activation='softmax')])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(x_train[:1000]/255.0, y_train[:1000], epochs=1, verbose=0)
+
+# FGSM attack
+x = tf.convert_to_tensor(x_test)
+y_true = tf.convert_to_tensor(y_test)
+epsilon = 0.1
+
+with tf.GradientTape() as tape:
+    tape.watch(x)
+    pred = model(x)
+    loss = tf.keras.losses.sparse_categorical_crossentropy(y_true, pred)
+grad = tape.gradient(loss, x)
+x_adv = x + epsilon * tf.sign(grad)
+pred_adv = tf.argmax(model(x_adv), axis=1)
+print("Original:", y_test, "Adversarial Prediction:", pred_adv.numpy())
