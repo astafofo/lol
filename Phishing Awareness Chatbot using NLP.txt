@@ -1,0 +1,16 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+
+# Sample Q&A
+X = ["how to detect phishing?", "what is a safe website?", "reset my password", "click link"]
+y = ["Phishing Awareness", "Phishing Awareness", "General", "Phishing Awareness"]
+
+vec = TfidfVectorizer()
+X_vec = vec.fit_transform(X)
+clf = LogisticRegression()
+clf.fit(X_vec, y)
+
+# Chatbot query
+query = "how do I know if a site is fake?"
+pred = clf.predict(vec.transform([query]))
+print("Chatbot response category:", pred[0])
