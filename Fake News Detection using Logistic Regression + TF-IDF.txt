@@ -1,0 +1,24 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# Sample news headlines
+X = [
+    "NASA confirms water on Mars",
+    "Celebrity adopts alien baby",
+    "Government passes new law",
+    "Click here to get rich fast"
+]
+y = [0, 1, 0, 1]  # 0=real, 1=fake
+
+# TF-IDF vectorization
+vec = TfidfVectorizer()
+X_vec = vec.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.25, random_state=42)
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+y_pred = lr.predict(X_test)
+
+print("Fake News Detection Report:\n", classification_report(y_test, y_pred))
