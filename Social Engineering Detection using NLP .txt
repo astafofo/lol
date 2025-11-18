@@ -1,0 +1,28 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# Sample email/text data
+X = [
+    "Please reset your password immediately",
+    "Win a free iPhone now",
+    "Meeting scheduled at 10 AM",
+    "Your account has been compromised, click here",
+    "Lunch with team today"
+]
+y = [1, 1, 0, 1, 0]  # 1=social engineering, 0=normal
+
+# Vectorize text
+vectorizer = TfidfVectorizer()
+X_vec = vectorizer.fit_transform(X)
+
+# Split
+X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=42)
+
+# Train classifier
+nb = MultinomialNB()
+nb.fit(X_train, y_train)
+y_pred = nb.predict(X_test)
+
+print("Social Engineering Detection Report:\n", classification_report(y_test, y_pred))
